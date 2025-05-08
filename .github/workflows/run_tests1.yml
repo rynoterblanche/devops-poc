@@ -1,0 +1,45 @@
+name: Test 95 # Related to SO https://stackoverflow.com/questions/78461104/how-can-i-configure-a-github-actions-strategy-matrix-to-dynamically-read-a-json
+
+on:
+  workflow_dispatch:
+    inputs:
+      stsReplay:
+        description: 'service to test'
+        required: true
+        default: 'service1'
+        type: choice
+        options:
+          - 'service1'
+          - 'service2'
+          - 'service3'
+
+env:
+  SERVICES_TEST_CONFIG: |
+    {
+      "service1": "./tests/service1",
+      "service2": "./tests/service2",
+      "service3": "./tests/service3",
+    }
+
+jobs:
+  job1:
+    runs-on: ubuntu-latest
+    outputs:
+      services: ${{ steps.set-matrix.outputs.values }}
+    steps:
+      - id: set-matrix
+        run: |
+          input_service="service1"
+          echo "input_service: $input_service"
+          values=$(echo "${SERVICES_TEST_CONFIG}" | jq -r --arg input_service "$input_service" '.[$input_service] | map("\"\(.)\"") | join(", ")')
+          echo "values:[$values]"
+          echo "values=[$values]" >> $GITHUB_OUTPUT
+  
+  job2:
+    needs: job1
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: 
+        services: ${{fromJson(needs.job1.outputs.services)}}
+    steps:
+      - run: echo "Running tests in ${{ matrix.services}}"
