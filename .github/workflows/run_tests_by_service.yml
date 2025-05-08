@@ -1,4 +1,4 @@
-name: Test 95 # Related to SO https://stackoverflow.com/questions/78461104/how-can-i-configure-a-github-actions-strategy-matrix-to-dynamically-read-a-json
+name: Run Tests By Service 
 
 on:
   workflow_dispatch:
