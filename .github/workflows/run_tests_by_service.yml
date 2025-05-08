@@ -25,21 +25,18 @@ jobs:
   job1:
     runs-on: ubuntu-latest
     outputs:
-      services: ${{ steps.set-matrix.outputs.values }}
+      test_folder: ${{ steps.set-test-folder.outputs.test_folder }}
     steps:
-      - id: set-matrix
+      - id: set-test-folder
         run: |
           input_service="service1"
           echo "input_service: $input_service"
-          values=$(echo "${SERVICES_TEST_CONFIG}" | jq -r --arg input_service "$input_service" '.[$input_service]')
-          echo "values:[$values]"
-          echo "values=[$values]" >> $GITHUB_OUTPUT
+          value=$(echo "${SERVICES_TEST_CONFIG}" | jq -r --arg input_service "$input_service" '.[$input_service]')
+          echo "test_folder:[$value]"
+          echo "test_folder=$value" >> $GITHUB_OUTPUT
   
   job2:
     needs: job1
     runs-on: ubuntu-latest
-    strategy:
-      matrix: 
-        services: ${{fromJson(needs.job1.outputs.services)}}
     steps:
-      - run: echo "Running tests in ${{ matrix.services}}"
+      - run: echo "Running tests in ${{ needs.job1.outputs.test_folder }}"
