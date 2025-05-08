@@ -29,7 +29,7 @@ jobs:
     steps:
       - id: set-test-folder
         run: |
-          input_service="${inputs.service}"
+          input_service="${{ inputs.service }}"
           echo "input_service: $input_service"
           value=$(echo "${SERVICES_TEST_CONFIG}" | jq -r --arg input_service "$input_service" '.[$input_service]')
           echo "test_folder:[$value]"
