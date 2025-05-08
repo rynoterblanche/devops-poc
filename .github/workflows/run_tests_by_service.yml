@@ -31,7 +31,7 @@ jobs:
         run: |
           input_service="service1"
           echo "input_service: $input_service"
-          values=$(echo "${SERVICES_TEST_CONFIG}" | jq '.$input_service')
+          values=$(echo "${SERVICES_TEST_CONFIG}" | jq '.[$input_service]')
           echo "values:[$values]"
           echo "values=[$values]" >> $GITHUB_OUTPUT
   
