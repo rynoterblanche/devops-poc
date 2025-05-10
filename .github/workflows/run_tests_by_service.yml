@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       test_folder: ${{ steps.set-test-folders.outputs.test_folder }}
-      smoke_test_folder: ${{ steps.set-test-folders.outputs.smoke_test_folder }}
+      smoke_test_folder: ${{ steps.set-test-folders.outputs.smoke_folder }}
     steps:
       - id: set-test-folders
         run: |
