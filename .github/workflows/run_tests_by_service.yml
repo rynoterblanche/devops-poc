@@ -16,27 +16,37 @@ on:
 env:
   SERVICES_TEST_CONFIG: |
     {
-      "service1": "./tests/service1",
-      "service2": "./tests/service2",
-      "service3": "./tests/service3"
+      "service1": {"tests": "./tests/service1", "smoke":  "./smoke/service1"},
+      "service2": {"tests": "./tests/service2", "smoke":  "./smoke/service2"},
+      "service3": {"tests": "./tests/service3", "smoke":  "./smoke/service3"},
     }
 
 jobs:
   job1:
     runs-on: ubuntu-latest
     outputs:
-      test_folder: ${{ steps.set-test-folder.outputs.test_folder }}
+      test_folder: ${{ steps.set-test-folders.outputs.test_folder }}
+      smoke_test_folder: ${{ steps.set-test-folders.outputs.smoke_test_folder }}
     steps:
-      - id: set-test-folder
+      - id: set-test-folders
         run: |
           input_service="${{ inputs.service }}"
           echo "input_service: $input_service"
-          value=$(echo "${SERVICES_TEST_CONFIG}" | jq -r --arg input_service "$input_service" '.[$input_service]')
-          echo "test_folder:[$value]"
-          echo "test_folder=$value" >> $GITHUB_OUTPUT
+          tests_folder=$(echo "${SERVICES_TEST_CONFIG}" | jq -r --arg input_service "$input_service" '.[$input_service].tests')
+          smoke_folder=$(echo "${SERVICES_TEST_CONFIG}" | jq -r --arg input_service "$input_service" '.[$input_service].smoke')
+          echo "test_folder:[$tests_folder]"
+          echo "smoke_folder:[$smoke_folder]"
+          echo "test_folder=$tests_folder" >> $GITHUB_OUTPUT
+          echo "smoke_folder=$smoke_folder" >> $GITHUB_OUTPUT
   
   job2:
     needs: job1
     runs-on: ubuntu-latest
     steps:
       - run: echo "Running tests in ${{ needs.job1.outputs.test_folder }}"
+
+  job3:
+    needs: job2
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Running smoke tests in ${{ needs.job2.outputs.smoke_folder }}"
