@@ -46,7 +46,7 @@ jobs:
       - run: echo "Running tests in ${{ needs.job1.outputs.test_folder }}"
 
   job3:
-    needs: job2
+    needs: [job1, job2]
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Running smoke tests in ${{ needs.job2.outputs.smoke_folder }}"
+      - run: echo "Running smoke tests in ${{ needs.job1.outputs.smoke_folder }}"
