@@ -18,7 +18,7 @@ env:
     {
       "service1": {"tests": "./tests/service1", "smoke":  "./smoke/service1"},
       "service2": {"tests": "./tests/service2", "smoke":  "./smoke/service2"},
-      "service3": {"tests": "./tests/service3", "smoke":  "./smoke/service3"},
+      "service3": {"tests": "./tests/service3", "smoke":  "./smoke/service3"}
     }
 
 jobs:
